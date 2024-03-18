@@ -1,0 +1,27 @@
+os: linux
+dist: focal
+language: generic
+services:
+  - docker
+
+git:
+  depth: false
+
+env:
+  global:
+    - RELEASE_BRANCH=main
+
+before_script:
+  - source ci/setup_env.sh
+
+jobs:
+  include:
+    - stage: Image Builder
+      name: "Build Docker Image for api"
+      script: ci/script_api.sh
+    - stage: Image Builder
+      name: "Build Docker Image for polling"
+      script: ci/script_polling.sh
+    - stage: Generate Github release
+      name: "Generate Github release"
+      script: ci/script_github_release.sh
