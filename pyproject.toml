@@ -1,5 +1,5 @@
 [project]
-name = "nh-explorer-api"
+name = "zkverify-explorer-api"
 version = "0.1.0"
 authors = [
     { name="Polkascan"},
