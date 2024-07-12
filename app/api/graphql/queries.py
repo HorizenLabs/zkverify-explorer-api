@@ -1,5 +1,7 @@
 import graphene
 
+from app.db import SessionManager
+from app.session import SessionLocal
 from app.api.graphql.filters import BlocksFilter, ExtrinsicFilter, EventsFilter, CodecEventIndexAccountFilter
 from app.api.graphql.node import QueryGenerator, QueryNodeOne, QueryNodeMany
 from app.models.explorer import Block, Extrinsic, Event, Log, TaggedAccount
@@ -447,9 +449,9 @@ class GraphQLQueries(metaclass=QueryGenerator):
     # ----------------------------------------
 
     def resolve_get_total_proof_count(self, info):
-        db = info.context['session']
-        return db.query(Event).filter(Event.event_name == 'ProofSubmitted').count()
+        with SessionManager(session_cls=SessionLocal) as session:
+            return session.query(Event).filter(Event.event_name == 'ProofSubmitted').count()
 
     def resolve_get_proof_count_by_type(self, info, type):
-        db = info.context['session']
-        return db.query(Event).filter(Event.event_name == 'ProofSubmitted', Event.attributes['type'] == type).count()
+        with SessionManager(session_cls=SessionLocal) as session:
+            return session.query(Event).filter(Event.event_name == 'ProofSubmitted', Event.attributes['type'] == type).count()
