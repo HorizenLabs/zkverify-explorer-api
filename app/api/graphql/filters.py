@@ -47,7 +47,7 @@ class ExtrinsicFilter(FilterSet):
         fields = {
             "block_number": ['eq', 'gt', 'lt', 'gte', 'lte', 'range'],
             'extrinsic_idx': ['eq',],
-            'call_module': ['eq',],
+            'call_module': ['eq', 'in'],
             'call_name': ['eq',],
             'signed': ['eq',],
             "block_datetime": ['eq', 'gt', 'lt', 'gte', 'lte', 'range'],
