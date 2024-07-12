@@ -450,8 +450,8 @@ class GraphQLQueries(metaclass=QueryGenerator):
 
     def resolve_get_total_proof_count(self, info):
         with SessionManager(session_cls=SessionLocal) as session:
-            return session.query(Event).filter(Event.event_name == 'ProofSubmitted').count()
+            return session.query(Extrinsic).filter(Extrinsic.call_name == 'submit_proof').count()
 
     def resolve_get_proof_count_by_type(self, info, type):
         with SessionManager(session_cls=SessionLocal) as session:
-            return session.query(Event).filter(Event.event_name == 'ProofSubmitted', Event.attributes['type'] == type).count()
+            return session.query(Extrinsic).filter(Extrinsic.call_name == 'submit_proof', Extrinsic.call_module == type).count()
