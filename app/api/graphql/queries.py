@@ -1,5 +1,7 @@
 import graphene
 
+from app.db import SessionManager
+from app.session import SessionLocal
 from app.api.graphql.filters import BlocksFilter, ExtrinsicFilter, EventsFilter, CodecEventIndexAccountFilter
 from app.api.graphql.node import QueryGenerator, QueryNodeOne, QueryNodeMany
 from app.models.explorer import Block, Extrinsic, Event, Log, TaggedAccount
@@ -426,3 +428,30 @@ class GraphQLQueries(metaclass=QueryGenerator):
             CodecEventIndexAccount.event_name: (CodecEventIndexAccount.pallet, ),
         }
     )
+
+    # ----------------------------------------
+        # Custom queries for proof-related operations
+    # ----------------------------------------
+
+    get_total_proof_count = graphene.Field(
+        graphene.Int(),
+        description="Get the total count of all proofs across all types"
+    )
+
+    get_proof_count_by_type = graphene.Field(
+        graphene.Int(),
+        type=graphene.String(required=True),
+        description="Get the total count of proofs of a specific type"
+    )
+
+    # ----------------------------------------
+    # Custom resolvers for proof-related operations
+    # ----------------------------------------
+
+    def resolve_get_total_proof_count(self, info):
+        with SessionManager(session_cls=SessionLocal) as session:
+            return session.query(Extrinsic).filter(Extrinsic.call_name == 'submit_proof').count()
+
+    def resolve_get_proof_count_by_type(self, info, type):
+        with SessionManager(session_cls=SessionLocal) as session:
+            return session.query(Extrinsic).filter(Extrinsic.call_name == 'submit_proof', Extrinsic.call_module == type).count()
